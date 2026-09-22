@@ -7,9 +7,28 @@
     <link rel="stylesheet" href="css/main.css" />
     <link rel="icon" href="img/flowers.png" type="image/x-icon" />
     <title>Flower</title>
+  <style>
+      #activarSonido {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        bottom: 25px;
+        transform: translateX(-50%);
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 25px;
+        background: rgba(255,255,255,.92);
+        color: #333;
+        font-size: 15px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,.2);
+      }
+    </style>
   </head>
   <body class="container">
-    <audio src="sound/ChristianBasso&HaienQiu-Flowers.mp3" autoplay></audio>
+    <audio id="musica" src="sound/ChristianBasso&HaienQiu-Flowers.mp3" autoplay loop preload="auto"></audio>
+    <button id="activarSonido" type="button" aria-label="Activar sonido">🔊 Toca para activar el sonido</button>
     <div id="lyrics">
      
     </div>
@@ -328,5 +347,32 @@
     </div>
     <script src="anim.js"></script>
     <script src="main.js"></script>
+    <script>
+      (() => {
+        const musica = document.getElementById('musica');
+        const boton = document.getElementById('activarSonido');
+
+        const ocultarBoton = () => {
+          boton.style.display = 'none';
+        };
+
+        const mostrarBoton = () => {
+          boton.style.display = 'block';
+        };
+
+        // Intento automático. En Android/iPhone puede ser bloqueado por el navegador.
+        musica.play().then(ocultarBoton).catch(mostrarBoton);
+
+        // Fallback: una interacción del usuario permite iniciar el audio.
+        boton.addEventListener('click', () => {
+          musica.play().then(ocultarBoton).catch(() => {});
+        });
+
+        // Algunos navegadores permiten reproducir después de cualquier toque.
+        document.addEventListener('touchstart', () => {
+          musica.play().then(ocultarBoton).catch(() => {});
+        }, { once: true, passive: true });
+      })();
+    </script>
   </body>
 </html>
